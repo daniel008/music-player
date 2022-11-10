@@ -78,9 +78,10 @@
         name="country"
         class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
       >
+        <option value="China">China</option>
+        <option value="Germany">Germany</option>
         <option value="USA">USA</option>
         <option value="Mexico">Mexico</option>
-        <option value="Germany">Germany</option>
         <option value="Antarctica">Antarctica</option>
       </vee-field>
       <ErrorMessage class="text-red-600" name="country" />
@@ -107,7 +108,7 @@
 </template>
 
 <script>
-import firebase from "@/includes/firebase";
+import { auth, usersCollection } from "@/includes/firebase";
 
 export default {
   name: "RegisterForm",
@@ -140,9 +141,25 @@ export default {
 
       let userCred = null;
       try {
-        userCred = await firebase
-          .auth()
-          .createUserWithEmailAndPassword(values.email, values.password);
+        userCred = await auth.createUserWithEmailAndPassword(
+          values.email,
+          values.password
+        );
+      } catch (error) {
+        this.reg_in_submission = false;
+        this.reg_alert_variant = "bg-red-500";
+        this.reg_alert_msg =
+          "An unexpected error occurred. Please try again later.";
+        return;
+      }
+
+      try {
+        await usersCollection.add({
+          name: values.name,
+          email: values.email,
+          age: values.age,
+          country: values.country,
+        });
       } catch (error) {
         this.reg_in_submission = false;
         this.reg_alert_variant = "bg-red-500";
