@@ -16,8 +16,21 @@ const routes = [
   },
   {
     name: "manage",
-    path: "/manage",
+    // alias: "/manage",
+    path: "/manage-misic",
     component: Manage,
+    beforeEnter: (to, from, next) => {
+      console.log("Manage Route Guard");
+      next();
+    },
+  },
+  {
+    path: "/manage",
+    redirect: { name: "manage" },
+  },
+  {
+    path: "/:catchAll(.*)*",
+    redirect: { name: "home" },
   },
 ];
 
@@ -25,6 +38,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   linkExactActiveClass: "text-yellow-500",
+});
+
+router.beforeEach((to, from, next) => {
+  console.log("Global Guard");
+  next();
 });
 
 export default router;
