@@ -151,6 +151,11 @@ export default {
 
       await commentsCollection.add(comment);
 
+      this.song.comment_count += 1;
+      await songsCollection.doc(this.$route.params.id).update({
+        comment_count: this.song.comment_count,
+      });
+
       this.getComments();
 
       if (auth.currentUser) {
